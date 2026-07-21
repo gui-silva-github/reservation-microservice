@@ -2,7 +2,7 @@ using Reservation.BookingsServices.BLL.DTO;
 
 namespace Reservation.BookingsService.BLL.Services
 {
-    public interface IBookingService
+    public interface IBookingsService
     {
         Task<IReadOnlyList<BookingResponse>> GetAllAsync(CancellationToken cancellationToken = default);
 
