@@ -12,7 +12,7 @@ using Reservation.BookingsService.DAL;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDataAccessLayer(builder.Configuration);
-builder.Services.AddBusinnessLogicLayer(builder.Configuration);
+builder.Services.AddBusinessLogicLayer(builder.Configuration);
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SectionName));
 
@@ -43,7 +43,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     })
-    .ConfigureApiBehavior(options =>
+    .ConfigureApiBehaviorOptions(options =>
     {
         options.InvalidModelStateResponseFactory = context =>
         {
@@ -52,12 +52,11 @@ builder.Services.AddControllers()
                 .ToDictionary(
                     entry => entry.Key,
                     entry => entry.Value!.Errors.Select(error => error.ErrorMessage).ToArray());
-            
+
             var response = new ApiErrorResponse(
                 "model_binding_error",
                 "Dados da requisição inválidos.",
-                errors
-            );
+                errors);
 
             return new BadRequestObjectResult(response);
         };
@@ -71,8 +70,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins("http://localhost:4200")
-        .AllowAnyMethod()
-        .AllowAnyHeader();     
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
 });
 
@@ -85,7 +84,7 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthentication();
-app.useAuthorization();
+app.UseAuthorization();
 app.MapControllers();
 
 if (app.Environment.IsDevelopment())

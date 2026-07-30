@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bookings.BLL\BookingsService.BLL.csproj" />
+    <ProjectReference Include="..\BLL\BookingsService.BLL.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,25 @@
+@BookingsService.API_HostAddress = https://localhost:7094
+
+### Listar todas as reservas
+GET {{BookingsService.API_HostAddress}}/api/bookings
+Accept: application/json
+
+### Buscar reserva por ID
+GET {{BookingsService.API_HostAddress}}/api/bookings/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+### Criar reserva (requer JWT)
+POST {{BookingsService.API_HostAddress}}/api/bookings
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "userId": "00000000-0000-0000-0000-000000000000",
+  "spaceId": "00000000-0000-0000-0000-000000000000",
+  "startDate": "2026-08-01T10:00:00Z",
+  "endDate": "2026-08-01T12:00:00Z"
+}
+
+### Cancelar reserva (requer JWT)
+DELETE {{BookingsService.API_HostAddress}}/api/bookings/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Bookings.DAL\BookingsService.DAL.csproj" />
+    <ProjectReference Include="..\DAL\BookingsService.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

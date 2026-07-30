@@ -4,6 +4,6 @@ namespace Reservation.BookingsService.DAL.Configuration
     {
         public const string SectionName = "MongoDb";
 
-        public string DatabaseName { get; set; } = "ReservationBooking";
+        public string DatabaseName { get; set; } = "ReservationBookings";
     }
 }
