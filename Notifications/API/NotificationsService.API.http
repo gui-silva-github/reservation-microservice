@@ -1,0 +1,16 @@
+@NotificationsService.API_HostAddress = https://localhost:7095
+
+GET {{NotificationsService.API_HostAddress}}/api/notifications/userid/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+###
+
+POST {{NotificationsService.API_HostAddress}}/api/notifications/send
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userId": "00000000-0000-0000-0000-000000000001",
+  "message": "Test notification",
+  "type": "BookingCreated"
+}

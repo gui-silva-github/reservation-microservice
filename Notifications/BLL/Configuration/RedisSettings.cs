@@ -1,0 +1,9 @@
+namespace Reservation.NotificationsService.BLL.Configuration
+{
+    public class RedisSettings
+    {
+        public const string SectionName = "Redis";
+
+        public string ConnectionString { get; set; } = "localhost:6379";
+    }
+}
