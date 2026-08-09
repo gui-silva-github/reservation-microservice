@@ -1,0 +1,58 @@
+@SpacesService_HostAddress = https://localhost:7187
+
+### List all spaces
+GET {{SpacesService_HostAddress}}/api/spaces
+Accept: application/json
+
+###
+
+### Get space by id
+GET {{SpacesService_HostAddress}}/api/spaces/{{spaceId}}
+Accept: application/json
+
+###
+
+### Search spaces
+GET {{SpacesService_HostAddress}}/api/spaces/search/coworking
+Accept: application/json
+
+###
+
+### Check availability
+GET {{SpacesService_HostAddress}}/api/spaces/{{spaceId}}/availability?from=2026-07-10T09:00:00Z&to=2026-07-10T12:00:00Z
+Accept: application/json
+
+###
+
+### Create space
+POST {{SpacesService_HostAddress}}/api/spaces
+Content-Type: application/json
+
+{
+  "name": "Sala Premium",
+  "location": "Andar 2",
+  "description": "Sala com projetor e ar-condicionado",
+  "capacity": 10,
+  "pricePerHour": 75.50
+}
+
+###
+
+### Update space
+PUT {{SpacesService_HostAddress}}/api/spaces/{{spaceId}}
+Content-Type: application/json
+
+{
+  "name": "Sala Premium Atualizada",
+  "location": "Andar 2",
+  "description": "Sala renovada",
+  "capacity": 12,
+  "pricePerHour": 85.00
+}
+
+###
+
+### Delete space (soft delete)
+DELETE {{SpacesService_HostAddress}}/api/spaces/{{spaceId}}
+
+###
