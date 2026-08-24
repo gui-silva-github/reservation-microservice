@@ -1,0 +1,24 @@
+@UsersService.Api_HostAddress = https://localhost:7186
+
+POST {{UsersService.Api_HostAddress}}/api/Auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "Password123"
+}
+
+###
+
+POST {{UsersService.Api_HostAddress}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "Password123"
+}
+
+###
+
+GET {{UsersService.Api_HostAddress}}/api/Users/00000000-0000-0000-0000-000000000001
