@@ -69,7 +69,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins("http://localhost:4200", "http://127.0.0.1:4200")
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
@@ -77,12 +77,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseCors();
 app.UseExceptionHandlingMiddleware();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseHttpsRedirection();
-app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
