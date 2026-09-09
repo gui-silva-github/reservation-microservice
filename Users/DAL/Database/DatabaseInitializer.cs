@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Extensions.Logging;
+using Reservation.UsersService.DAL.Enums;
 
 namespace Reservation.UsersService.DAL.Database {
     public sealed class DatabaseInitializer {
@@ -24,7 +25,36 @@ namespace Reservation.UsersService.DAL.Database {
             """;
 
             await _dbContext.Connection.ExecuteAsync(createTableSql);
+            await SeedAdminAsync();
             _logger.LogInformation("Database schema verificado para UsersService.");
+        }
+
+        private async Task SeedAdminAsync() {
+            const string email = "admin@reservas.com";
+            int existing = await _dbContext.Connection.ExecuteScalarAsync<int>(
+                "SELECT COUNT(1) FROM users WHERE email = @Email",
+                new { Email = email });
+
+            if (existing > 0) {
+                return;
+            }
+
+            const string query = """
+                INSERT INTO users (id, name, email, password_hash, role, created_at)
+                VALUES (@Id, @Name, @Email, @PasswordHash, @Role, @CreatedAt)
+            """;
+
+            await _dbContext.Connection.ExecuteAsync(query, new
+            {
+                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Name = "Administrador",
+                Email = email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+                Role = UserRole.Admin.ToString(),
+                CreatedAt = DateTime.UtcNow
+            });
+
+            _logger.LogInformation("Usuário admin inicial criado: {Email}", email);
         }
     }
 }
