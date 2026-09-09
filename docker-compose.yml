@@ -1,0 +1,187 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: reservas-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-init:
+    image: postgres:16-alpine
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: postgres
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        psql -h postgres -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'ReservasUsers'" | grep -q 1 \
+          || psql -h postgres -U postgres -c 'CREATE DATABASE "ReservasUsers";'
+        psql -h postgres -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'ReservasNotifications'" | grep -q 1 \
+          || psql -h postgres -U postgres -c 'CREATE DATABASE "ReservasNotifications";'
+    restart: "no"
+
+  mysql:
+    image: mysql:8.0
+    container_name: reservas-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: spaces_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-padmin"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  mongodb:
+    image: mongo:7
+    container_name: reservas-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: reservas-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  users-service:
+    build:
+      context: ./Users
+      dockerfile: API/Dockerfile
+    container_name: reservas-users-service
+    ports:
+      - "7186:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__PostgresConnection: Host=postgres;Port=5432;Database=ReservasUsers;Username=postgres;Password=postgres
+      Jwt__SecretKey: ReservasUsersService_SuperSecretKey_Min32Chars!
+      Jwt__Issuer: ReservasUsersService
+      Jwt__Audience: ReservasPlatform
+    depends_on:
+      postgres-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  spaces-service:
+    build:
+      context: ./Spaces
+      dockerfile: API/Dockerfile
+    container_name: reservas-spaces-service
+    ports:
+      - "7187:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      MYSQL_HOST: mysql
+      MYSQL_PASSWORD: admin
+      BookingsServiceUrl: http://bookings-service:8080
+      Jwt__SecretKey: ReservasUsersService_SuperSecretKey_Min32Chars!
+      Jwt__Issuer: ReservasUsersService
+      Jwt__Audience: ReservasPlatform
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  bookings-service:
+    build:
+      context: ./Bookings
+      dockerfile: API/Dockerfile
+    container_name: reservas-bookings-service
+    ports:
+      - "7094:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__MongoConnection: mongodb://mongodb:27017
+      ConnectionStrings__Redis: redis:6379
+      MongoDb__DatabaseName: ReservasBookings
+      UsersServiceUrl: http://users-service:8080
+      SpacesServiceUrl: http://spaces-service:8080
+      Jwt__SecretKey: ReservasUsersService_SuperSecretKey_Min32Chars!
+      Jwt__Issuer: ReservasUsersService
+      Jwt__Audience: ReservasPlatform
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      users-service:
+        condition: service_started
+      spaces-service:
+        condition: service_started
+    restart: unless-stopped
+
+  notifications-service:
+    build:
+      context: ./Notifications
+      dockerfile: API/Dockerfile
+    container_name: reservas-notifications-service
+    ports:
+      - "7095:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__PostgresConnection: Host=postgres;Port=5432;Database=ReservasNotifications;Username=postgres;Password=postgres
+      Redis__ConnectionString: redis:6379
+      Jwt__SecretKey: ReservasUsersService_SuperSecretKey_Min32Chars!
+      Jwt__Issuer: ReservasUsersService
+      Jwt__Audience: ReservasPlatform
+    depends_on:
+      postgres-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: reservas-frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - users-service
+      - spaces-service
+      - bookings-service
+      - notifications-service
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  mysql_data:
+  mongodb_data:
+  redis_data:
