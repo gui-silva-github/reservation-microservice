@@ -19,7 +19,7 @@ builder.Services.AddDAL();
 builder.Services.AddBLL(builder.Configuration);
 
 JwtSettings jwtSettings = builder.Configuration
-    .GetSection(jwtSettings.SectionName)
+    .GetSection(JwtSettings.SectionName)
     .Get<JwtSettings>() ?? throw new InvalidOperationException("As configurações de JWT não estão configuradas.");
 
 builder.Services
@@ -34,8 +34,8 @@ builder.Services
          ValidateIssuerSigningKey = true,
          ValidIssuer = jwtSettings.Issuer,
          ValidAudience = jwtSettings.Audience,
-         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))  
-       }; 
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+       };
     });
 
 builder.Services.AddAuthorization();
@@ -45,7 +45,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     })
-    .ConfigureApiBehaviorOption(options =>
+    .ConfigureApiBehaviorOptions(options =>
     {
         options.InvalidModelStateResponseFactory = context =>
         {
@@ -68,7 +68,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins("http://localhost:4200", "http://127.0.0.1:4200")
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
@@ -78,17 +78,15 @@ var app = builder.Build();
 
 using (IServiceScope scope = app.Services.CreateScope())
 {
-    DatabaseInitializer databaseInitializer = scope.ServiceProvider.GetRequiredService<databaseInitializer>();
+    DatabaseInitializer databaseInitializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
     await databaseInitializer.InitializeAsync();
 }
 
+app.UseCors();
 app.UseExceptionHandlingMiddleware();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
-app.UseHttpsRedirection();
-app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

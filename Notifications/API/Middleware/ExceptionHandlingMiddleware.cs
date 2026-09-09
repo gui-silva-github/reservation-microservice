@@ -42,7 +42,7 @@ namespace Reservation.NotificationsService.API.Middleware
                 throw exception;
             }
 
-            (HttpStatusCode httpStatusCode, ApiErrorResponse errorResponse) = MapException(exception);
+            (HttpStatusCode statusCode, ApiErrorResponse errorResponse) = MapException(exception);
 
             if (statusCode == HttpStatusCode.InternalServerError)
             {

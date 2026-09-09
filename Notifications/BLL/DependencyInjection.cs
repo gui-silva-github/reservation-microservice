@@ -2,9 +2,9 @@ using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Reservation.NotificationsService.BLL.Interfaces;
-using Reservation.NotificationService.BLL.Mappers;
-using Reservation.NotificationService.BLL.Services;
-using Reservation.NotificationService.BLL.Validators;
+using Reservation.NotificationsService.BLL.Mappings;
+using Reservation.NotificationsService.BLL.Services;
+using Reservation.NotificationsService.BLL.Validators;
 using Reservation.NotificationsService.BLL.Workers;
 using StackExchange.Redis;
 
@@ -24,7 +24,7 @@ namespace Reservation.NotificationsService.BLL
                if (string.IsNullOrWhiteSpace(connectionString))
                 {
                     throw new InvalidOperationException("Redis connection string não está configurada.");
-                } 
+                }
 
                 return ConnectionMultiplexer.Connect(connectionString);
             });

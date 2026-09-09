@@ -4,7 +4,7 @@ namespace Reservation.NotificationsService.BLL.Interfaces
 {
     public interface INotificationService
     {
-        Task<NotificationResponse> SendAsync(SendNotificationRquest request);
+        Task<NotificationResponse> SendAsync(SendNotificationRequest request);
         Task<IReadOnlyList<NotificationResponse>> GetByUserIdAsync(Guid userId, Guid? authenticatedUserId, string? role);
         Task ProcessBookingCreatedEventAsync(BookingCreatedEvent bookingEvent);
     }

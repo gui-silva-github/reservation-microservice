@@ -20,6 +20,7 @@ namespace Reservation.NotificationsService.API.Controllers
         }
 
         [HttpPost]
+        [HttpPost("send")]
         [ProducesResponseType(typeof(NotificationResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]

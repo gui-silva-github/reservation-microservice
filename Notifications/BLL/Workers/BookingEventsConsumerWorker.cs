@@ -9,7 +9,7 @@ using StackExchange.Redis;
 
 namespace Reservation.NotificationsService.BLL.Workers
 {
-    public sealed class BookingEventConsumerWorker : BackgroundService
+    public sealed class BookingEventsConsumerWorker : BackgroundService
     {
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
@@ -20,7 +20,7 @@ namespace Reservation.NotificationsService.BLL.Workers
         private readonly IConnectionMultiplexer _redis;
         private readonly ILogger<BookingEventsConsumerWorker> _logger;
 
-        public BookingEventConsumerWorker(
+        public BookingEventsConsumerWorker(
             IServiceScopeFactory serviceScopeFactory,
             IConnectionMultiplexer redis,
             ILogger<BookingEventsConsumerWorker> logger)
@@ -33,7 +33,7 @@ namespace Reservation.NotificationsService.BLL.Workers
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation(
-                "Booking events consumer started. Listening on Redis queue '{{QueueKey}}'.",
+                "Booking events consumer started. Listening on Redis queue '{QueueKey}'.",
                 RedisQueueKeys.BookingEvents);
 
             IDatabase database = _redis.GetDatabase();
