@@ -1,0 +1,79 @@
+<div class="container">
+  <mat-card class="w-50">
+    <mat-card-header>
+      <mat-card-title class="card-title">Adicionar Espaço</mat-card-title>
+      <span class="spacer"></span>
+      <a [routerLink]="['/admin', 'spaces']" mat-button class="mat-link">Voltar aos Espaços</a>
+    </mat-card-header>
+    <mat-card-content class="flex flex-column">
+      @if (errorMessage(); as message) {
+        <div class="app-alert app-alert--error" role="alert">
+          <mat-icon aria-hidden="true">error_outline</mat-icon>
+          <div class="app-alert__content">
+            <p class="app-alert__title">Não foi possível salvar</p>
+            <p class="app-alert__message">{{ message }}</p>
+          </div>
+        </div>
+      }
+
+      <form [formGroup]="newSpaceForm" (ngSubmit)="create()">
+        <mat-form-field class="w-100">
+          <mat-label>Nome</mat-label>
+          <input matInput placeholder="Nome do espaço" formControlName="name" autofocus="autofocus" />
+          @if (nameFormControl.hasError('required')) {
+            <mat-error>Nome não pode ser vazio</mat-error>
+          } @else if (hasApiError(nameFormControl)) {
+            <mat-error>{{ getApiError(nameFormControl) }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+          <mat-label>Localização</mat-label>
+          <input matInput placeholder="Localização" formControlName="location" />
+          @if (locationFormControl.hasError('required')) {
+            <mat-error>Localização não pode ser vazia</mat-error>
+          } @else if (hasApiError(locationFormControl)) {
+            <mat-error>{{ getApiError(locationFormControl) }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput placeholder="Descrição (opcional)" formControlName="description" rows="3"></textarea>
+          @if (hasApiError(descriptionFormControl)) {
+            <mat-error>{{ getApiError(descriptionFormControl) }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+          <mat-label>Capacidade</mat-label>
+          <input matInput type="number" min="1" placeholder="Capacidade" formControlName="capacity" />
+          @if (capacityFormControl.hasError('required')) {
+            <mat-error>Capacidade é obrigatória</mat-error>
+          } @else if (hasApiError(capacityFormControl)) {
+            <mat-error>{{ getApiError(capacityFormControl) }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+          <mat-label>Preço por Hora</mat-label>
+          <input matInput type="number" min="0" step="0.01" placeholder="Preço por hora" formControlName="pricePerHour" />
+          @if (pricePerHourFormControl.hasError('required')) {
+            <mat-error>Preço é obrigatório</mat-error>
+          } @else if (hasApiError(pricePerHourFormControl)) {
+            <mat-error>{{ getApiError(pricePerHourFormControl) }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="flex button-panel">
+          <div class="empty"></div>
+          @if (usersService.isAuthenticated && usersService.isAdmin) {
+            <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting()">
+              {{ isSubmitting() ? 'Salvando...' : 'Salvar' }}
+            </button>
+          }
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

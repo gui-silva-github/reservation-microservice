@@ -49,7 +49,7 @@ export class BookingsService {
       },
       error: () => {
         this.bookings.set([]);
-        this.error.set('Não foi possívl carregar as reservas. Verifique se o microserviço está ativo.');
+        this.error.set('Não foi possível carregar as reservas. Verifique se o microserviço está ativo.');
         this.loading.set(false);
       }
     });

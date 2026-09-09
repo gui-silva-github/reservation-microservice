@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+.notifications-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.notifications-toolbar__summary {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.notifications-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.notification-card--unread {
+  border-left: 3px solid var(--primary-700, #1b5e20);
+}
+
+.notification-card__avatar {
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--primary-700, #1b5e20) 12%, transparent);
+  color: var(--primary-700, #1b5e20);
+  border-radius: 50%;
+}
+
+.notification-card__message {
+  margin: 0.5rem 0 0;
+  line-height: 1.45;
+  color: var(--text-primary, inherit);
+  white-space: pre-wrap;
+}

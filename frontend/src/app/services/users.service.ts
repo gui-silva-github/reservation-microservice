@@ -42,7 +42,18 @@ export class UsersService {
         localStorage.setItem('currentUserId', userId);
     }
 
-    normalizeAuthResponse(raw: Record<string, unknown>): AuthenticationResponse {
+    logout(): void {
+    this.isAuthenticated = false;
+    this.isAdmin = false;
+    this.currentUserName = null;
+    this.currentUserId = null;
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('isAdmin');
+    localStorage.removeItem('currentUserName');
+    localStorage.removeItem('currentUserId');
+  }
+
+  normalizeAuthResponse(raw: Record<string, unknown>): AuthenticationResponse {
         return {
             userId: String(raw['userId'] ?? raw['UserId'] ?? ''),
             name: String(raw['name'] ?? raw['Name'] ?? ''),

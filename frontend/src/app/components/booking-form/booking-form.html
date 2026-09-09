@@ -1,0 +1,94 @@
+<div class="container">
+  <mat-card class="w-50">
+    <mat-card-header>
+      <mat-card-title class="card-title">
+        <mat-icon aria-hidden="true">event_available</mat-icon>
+        Nova Reserva
+      </mat-card-title>
+      <span class="spacer"></span>
+      <a [routerLink]="['/spaces']" mat-button class="mat-link">
+        <mat-icon aria-hidden="true">arrow_back</mat-icon>
+        Voltar
+      </a>
+    </mat-card-header>
+
+    @if (loading()) {
+      <mat-card-content>
+        <div class="empty-state" role="status">
+          <span class="empty-state__icon" aria-hidden="true">
+            <mat-icon>hourglass_top</mat-icon>
+          </span>
+          <p class="empty-state__title">Carregando espaço...</p>
+        </div>
+      </mat-card-content>
+    } @else if (error(); as errorMsg) {
+      <mat-card-content>
+        <div class="empty-state" role="alert">
+          <span class="empty-state__icon" aria-hidden="true">
+            <mat-icon>error_outline</mat-icon>
+          </span>
+          <p class="empty-state__title">{{ errorMsg }}</p>
+          <a [routerLink]="['/spaces']" mat-stroked-button color="primary">
+            Voltar aos espaços
+          </a>
+        </div>
+      </mat-card-content>
+    } @else if (space(); as currentSpace) {
+      <mat-card-content class="flex flex-column">
+        <div class="space-summary">
+          <h3>{{ currentSpace.name }}</h3>
+          <p>
+            <mat-icon aria-hidden="true">location_on</mat-icon>
+            {{ currentSpace.location }}
+          </p>
+          <p>
+            <mat-icon aria-hidden="true">groups</mat-icon>
+            Capacidade: {{ currentSpace.capacity }} pessoas
+          </p>
+        </div>
+
+        @if (errorMessage(); as message) {
+          <div class="app-alert app-alert--error" role="alert">
+            <mat-icon aria-hidden="true">error_outline</mat-icon>
+            <div class="app-alert__content">
+              <p class="app-alert__title">Não foi possível reservar</p>
+              <p class="app-alert__message">{{ message }}</p>
+            </div>
+          </div>
+        }
+
+        <form [formGroup]="bookingForm" (ngSubmit)="submit()">
+          <mat-form-field class="w-100">
+            <mat-label>Início</mat-label>
+            <mat-icon matPrefix aria-hidden="true">schedule</mat-icon>
+            <input matInput type="datetime-local" formControlName="startDate" />
+            @if (startDateFormControl.hasError('required')) {
+              <mat-error>Data de início é obrigatória</mat-error>
+            } @else if (hasApiError(startDateFormControl)) {
+              <mat-error>{{ getApiError(startDateFormControl) }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="w-100">
+            <mat-label>Término</mat-label>
+            <mat-icon matPrefix aria-hidden="true">schedule</mat-icon>
+            <input matInput type="datetime-local" formControlName="endDate" />
+            @if (endDateFormControl.hasError('required')) {
+              <mat-error>Data de término é obrigatória</mat-error>
+            } @else if (hasApiError(endDateFormControl)) {
+              <mat-error>{{ getApiError(endDateFormControl) }}</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="flex button-panel">
+            <div class="empty"></div>
+            <button mat-flat-button color="primary" type="submit" class="btn-primary-action" [disabled]="isSubmitting()">
+              <mat-icon aria-hidden="true">{{ isSubmitting() ? 'hourglass_top' : 'event_available' }}</mat-icon>
+              {{ isSubmitting() ? 'Reservando...' : 'Confirmar reserva' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    }
+  </mat-card>
+</div>

@@ -1,0 +1,86 @@
+<div class="page-header">
+    <span class="page-header__icon" aria-hidden="true">
+      <mat-icon>meeting_room</mat-icon>
+    </span>
+    <div class="page-header__text">
+      <span>Espaços Disponíveis</span>
+      <span class="page-header__subtitle">Encontre o local ideal para sua reserva</span>
+    </div>
+  </div>
+  
+  @if (spacesService.loading()) {
+    <div class="empty-state" role="status">
+      <span class="empty-state__icon" aria-hidden="true">
+        <mat-icon>hourglass_top</mat-icon>
+      </span>
+      <p class="empty-state__title">Carregando espaços...</p>
+    </div>
+  } @else if (spacesService.error(); as errorMessage) {
+    <div class="empty-state" role="alert">
+      <span class="empty-state__icon" aria-hidden="true">
+        <mat-icon>cloud_off</mat-icon>
+      </span>
+      <p class="empty-state__title">Falha ao carregar</p>
+      <p class="empty-state__hint">{{ errorMessage }}</p>
+      <button mat-stroked-button color="primary" type="button" (click)="spacesService.loadCatalog()">
+        <mat-icon>refresh</mat-icon>
+        Tentar novamente
+      </button>
+    </div>
+  } @else if (!spacesService.hasSpaces()) {
+    <div class="empty-state" role="status">
+      <span class="empty-state__icon" aria-hidden="true">
+        <mat-icon>meeting_room</mat-icon>
+      </span>
+      <p class="empty-state__title">Nenhum espaço disponível</p>
+      <p class="empty-state__hint">Novos espaços serão adicionados em breve. Volte mais tarde.</p>
+    </div>
+  } @else {
+    <div class="product-grid">
+      @for (space of spacesService.catalog(); track space.id) {
+        <mat-card class="product">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <span class="category-chip">
+                <mat-icon aria-hidden="true">location_on</mat-icon>
+                {{ space.location }}
+              </span>
+            </mat-card-subtitle>
+            <mat-card-title>{{ space.name }}</mat-card-title>
+          </mat-card-header>
+  
+          <mat-card-content class="mt">
+            @if (space.description) {
+              <p class="space-description">{{ space.description }}</p>
+            }
+            <p class="price-tag">
+              <mat-icon aria-hidden="true">groups</mat-icon>
+              Capacidade: {{ space.capacity }} pessoas
+            </p>
+            <p class="price-tag">
+              <mat-icon aria-hidden="true">sell</mat-icon>
+              {{ space.pricePerHour | currency:'BRL':'symbol':'1.2-2' }}/hora
+            </p>
+            <mat-divider></mat-divider>
+          </mat-card-content>
+  
+          <mat-card-actions>
+            @if (usersService.isAuthenticated && !usersService.isAdmin && canBook(space)) {
+              <a mat-flat-button color="primary" class="btn-icon-action" [routerLink]="['/spaces', space.id, 'book']">
+                <mat-icon aria-hidden="true">event_available</mat-icon>
+                Reservar
+              </a>
+            } @else if (!usersService.isAuthenticated) {
+              <a mat-button color="primary" [routerLink]="['/auth', 'login']" class="btn-icon-action">
+                <mat-icon aria-hidden="true">login</mat-icon>
+                Login para reservar
+              </a>
+            } @else if (!space.isActive) {
+              <span class="inactive-label">Indisponível</span>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+  

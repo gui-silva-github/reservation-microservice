@@ -1,0 +1,21 @@
+.space-summary {
+  margin-bottom: 1.5rem;
+}
+
+.space-summary h3 {
+  margin: 0 0 0.5rem;
+}
+
+.space-summary p {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0.25rem 0;
+  color: var(--text-secondary, #666);
+}
+
+.space-summary mat-icon {
+  font-size: 1.125rem;
+  width: 1.125rem;
+  height: 1.125rem;
+}

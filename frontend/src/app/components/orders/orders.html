@@ -1,0 +1,96 @@
+<div class="page-header">
+  <span class="page-header__icon" aria-hidden="true">
+    <mat-icon>event_note</mat-icon>
+  </span>
+  <div class="page-header__text">
+    <span>Minhas Reservas</span>
+    <span class="page-header__subtitle">Acompanhe e gerencie suas reservas</span>
+  </div>
+</div>
+
+@if (cancelError(); as errorMessage) {
+  <div class="app-alert app-alert--error" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    <div class="app-alert__content">
+      <p class="app-alert__message">{{ errorMessage }}</p>
+    </div>
+  </div>
+}
+
+@if (bookingsService.loading()) {
+  <div class="empty-state" role="status">
+    <span class="empty-state__icon" aria-hidden="true">
+      <mat-icon>hourglass_top</mat-icon>
+    </span>
+    <p class="empty-state__title">Carregando reservas...</p>
+  </div>
+} @else if (bookingsService.error(); as errorMessage) {
+  <div class="empty-state" role="alert">
+    <span class="empty-state__icon" aria-hidden="true">
+      <mat-icon>cloud_off</mat-icon>
+    </span>
+    <p class="empty-state__title">Falha ao carregar</p>
+    <p class="empty-state__hint">{{ errorMessage }}</p>
+    <button mat-stroked-button color="primary" type="button" (click)="reloadBookings()">
+      <mat-icon>refresh</mat-icon>
+      Tentar novamente
+    </button>
+  </div>
+} @else if (!bookingsService.hasBookings()) {
+  <div class="empty-state" role="status">
+    <span class="empty-state__icon" aria-hidden="true">
+      <mat-icon>event_busy</mat-icon>
+    </span>
+    <p class="empty-state__title">Nenhuma reserva encontrada</p>
+    <p class="empty-state__hint">Suas reservas aparecerão aqui após confirmar uma no catálogo de espaços.</p>
+    <a mat-stroked-button color="primary" [routerLink]="['/spaces']">
+      <mat-icon>meeting_room</mat-icon>
+      Ver espaços
+    </a>
+  </div>
+} @else {
+  <div class="orders-grid">
+    @for (booking of bookingsService.bookings(); track booking.id) {
+      <mat-card class="order-card">
+        <mat-card-header>
+          <mat-card-title>Reserva #{{ booking.id.slice(0, 8) }}</mat-card-title>
+          <mat-card-subtitle>
+            Criada em {{ booking.createdAt | date:'dd/MM/yyyy HH:mm' }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="order-meta">
+            <span class="order-meta__item">
+              <mat-icon aria-hidden="true">meeting_room</mat-icon>
+              Espaço: {{ booking.spaceId.slice(0, 8) }}...
+            </span>
+            <span class="order-meta__item">
+              <mat-icon aria-hidden="true">schedule</mat-icon>
+              {{ booking.startDate | date:'dd/MM/yyyy HH:mm' }} — {{ booking.endDate | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+            <span class="order-meta__item">
+              <mat-icon aria-hidden="true">info</mat-icon>
+              Status: {{ booking.status }}
+            </span>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+          @if (canCancel(booking)) {
+            <button
+              mat-stroked-button
+              color="warn"
+              type="button"
+              (click)="cancelBooking(booking)"
+              [disabled]="cancellingId() === booking.id"
+            >
+              <mat-icon>{{ cancellingId() === booking.id ? 'hourglass_top' : 'cancel' }}</mat-icon>
+              {{ cancellingId() === booking.id ? 'Cancelando...' : 'Cancelar' }}
+            </button>
+          }
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+}

@@ -1,0 +1,93 @@
+<div class="container">
+  <mat-card class="w-50">
+    <mat-card-header>
+      <mat-card-title class="card-title">
+        <mat-icon aria-hidden="true">edit</mat-icon>
+        Editar Espaço
+      </mat-card-title>
+      <span class="spacer"></span>
+      <a [routerLink]="['/admin', 'spaces']" mat-button class="mat-link">
+        <mat-icon aria-hidden="true">arrow_back</mat-icon>
+        Voltar
+      </a>
+    </mat-card-header>
+
+    @if (loading()) {
+      <mat-card-content>
+        <div class="empty-state" role="status">
+          <span class="empty-state__icon" aria-hidden="true">
+            <mat-icon>hourglass_top</mat-icon>
+          </span>
+          <p class="empty-state__title">Carregando espaço...</p>
+        </div>
+      </mat-card-content>
+    } @else if (error(); as errorMessage) {
+      <mat-card-content>
+        <div class="empty-state" role="alert">
+          <span class="empty-state__icon" aria-hidden="true">
+            <mat-icon>error_outline</mat-icon>
+          </span>
+          <p class="empty-state__title">{{ errorMessage }}</p>
+          <a [routerLink]="['/admin', 'spaces']" mat-stroked-button color="primary">
+            Voltar aos espaços
+          </a>
+        </div>
+      </mat-card-content>
+    } @else {
+      <mat-card-content class="flex flex-column">
+        @if (saveError(); as message) {
+          <div class="app-alert app-alert--error" role="alert">
+            <mat-icon aria-hidden="true">error_outline</mat-icon>
+            <div class="app-alert__content">
+              <p class="app-alert__title">Não foi possível salvar</p>
+              <p class="app-alert__message">{{ message }}</p>
+            </div>
+          </div>
+        }
+
+        <form [formGroup]="editSpaceForm" (ngSubmit)="update()">
+          <mat-form-field class="w-100">
+            <mat-label>Nome</mat-label>
+            <input matInput placeholder="Nome do espaço" formControlName="name" />
+            @if (nameFormControl.hasError('required')) {
+              <mat-error>Nome não pode ser vazio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="w-100">
+            <mat-label>Localização</mat-label>
+            <input matInput placeholder="Localização" formControlName="location" />
+            @if (locationFormControl.hasError('required')) {
+              <mat-error>Localização não pode ser vazia</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="w-100">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput placeholder="Descrição (opcional)" formControlName="description" rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field class="w-100">
+            <mat-label>Capacidade</mat-label>
+            <input matInput type="number" min="1" formControlName="capacity" />
+          </mat-form-field>
+
+          <mat-form-field class="w-100">
+            <mat-label>Preço por Hora</mat-label>
+            <input matInput type="number" min="0" step="0.01" formControlName="pricePerHour" />
+          </mat-form-field>
+
+          <div class="flex button-panel">
+            <div class="empty"></div>
+            @if (usersService.isAuthenticated && usersService.isAdmin) {
+              <button mat-flat-button color="primary" type="submit" class="btn-primary-action" [disabled]="saving()">
+                <mat-icon aria-hidden="true">save</mat-icon>
+                {{ saving() ? 'Salvando...' : 'Salvar' }}
+              </button>
+            }
+          </div>
+        </form>
+      </mat-card-content>
+    }
+  </mat-card>
+</div>
