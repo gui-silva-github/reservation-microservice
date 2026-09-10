@@ -39,7 +39,7 @@ export const listStagger = trigger('listStagger', [
     query(
       '.product, .order-card, .notification-card',
       [
-        style({ opacity: 0, transform: 'translateY(6px)' }),
+        style({ opacity: 0 }),
         stagger(40, [
           animate(
             '280ms ease-out',
