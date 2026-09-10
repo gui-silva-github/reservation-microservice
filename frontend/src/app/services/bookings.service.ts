@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../environment';
 import { BookingResponse } from '../models/booking-response';
@@ -17,11 +17,6 @@ export class BookingsService {
   readonly error = signal<string | null>(null);
   readonly hasBookings = computed(() => this.bookings().length > 0);
 
-  private authHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
-    return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
-  }
-
   getBookingsByUserId(userId: string): Observable<BookingResponse[]> {
     return this.http
       .get<unknown>(`${this.baseUrl}/search/userid/${userId}`)
@@ -30,16 +25,18 @@ export class BookingsService {
 
   createBooking(request: CreateBookingRequest): Observable<BookingResponse> {
     return this.http
-      .post<unknown>(this.baseUrl, request, { headers: this.authHeaders() })
+      .post<unknown>(this.baseUrl, request)
       .pipe(map((data) => this.toBooking(data as Record<string, unknown>)));
   }
 
   cancelBooking(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`, { headers: this.authHeaders() });
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  loadBookingsByUser(userId: string): void {
-    this.loading.set(true);
+  loadBookingsByUser(userId: string, options?: { silent?: boolean }): void {
+    if (!options?.silent) {
+      this.loading.set(true);
+    }
     this.error.set(null);
 
     this.getBookingsByUserId(userId).subscribe({
@@ -49,14 +46,22 @@ export class BookingsService {
       },
       error: () => {
         this.bookings.set([]);
-        this.error.set('Não foi possível carregar as reservas. Verifique se o microserviço está ativo.');
+        this.error.set('Não foi possível carregar as reservas. Verifique se o serviço está ativo.');
         this.loading.set(false);
       }
     });
   }
 
-  removeBookingFromList(id: string): void {
-    this.bookings.update((items) => items.filter((b) => b.id !== id));
+  invalidateByUser(userId: string): void {
+    this.loadBookingsByUser(userId, { silent: true });
+  }
+
+  markCancelled(id: string): void {
+    this.bookings.update((items) =>
+      items.map((booking) =>
+        booking.id === id ? { ...booking, status: 'Cancelled' } : booking
+      ),
+    );
   }
 
   private sortByDateDesc(bookings: BookingResponse[]): BookingResponse[] {

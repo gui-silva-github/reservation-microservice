@@ -1,8 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../environment';
 import { NotificationResponse } from '../models/notification-response';
+import { getApiErrorMessage } from '../utils/api-error.util';
 
 @Injectable({
     providedIn: 'root',
@@ -17,19 +18,42 @@ export class NotificationsService {
     readonly hasNotifications = computed(() => this.notifications().length > 0);
     readonly unreadCount = computed(() => this.notifications().filter((notification: NotificationResponse) => !notification.read).length)
 
-    private authHeaders(): HttpHeaders {
-        const token = localStorage.getItem('authToken');
-        return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
-    }
-
     getByUserId(userId: string): Observable<NotificationResponse[]> {
         return this.http
-            .get<unknown>(`${this.baseUrl}/userid/${userId}`, { headers: this.authHeaders()})
+            .get<unknown>(`${this.baseUrl}/userid/${userId}`)
             .pipe(map((data: unknown) => this.toNotifications(data)));
     }
 
-    loadByUser(userId: string): void {
-        this.loading.set(true);
+    markAsRead(id: string): Observable<NotificationResponse> {
+        return this.http
+            .patch<unknown>(`${this.baseUrl}/${id}/read`, {})
+            .pipe(map((data: unknown) => this.toNotification(data as Record<string, unknown>)));
+    }
+
+    markAllAsRead(userId: string): Observable<void> {
+        return this.http.patch<void>(`${this.baseUrl}/userid/${userId}/read-all`, {});
+    }
+
+    markLocalAsRead(id: string): void {
+        this.notifications.update((items) =>
+            items.map((notification) =>
+                notification.id === id ? { ...notification, read: true } : notification,
+            ),
+        );
+    }
+
+    markLocalAllAsRead(): void {
+        this.notifications.update((items) => items.map((notification) => ({ ...notification, read: true })));
+    }
+
+    invalidateByUser(userId: string): void {
+        this.loadByUser(userId, { silent: true });
+    }
+
+    loadByUser(userId: string, options?: { silent?: boolean }): void {
+        if (!options?.silent) {
+            this.loading.set(true);
+        }
         this.error.set(null);
 
         this.getByUserId(userId).subscribe({
@@ -37,10 +61,13 @@ export class NotificationsService {
                 this.notifications.set(this.sortByDateDesc(notifications));
                 this.loading.set(false);
             },
-            error: () => {
+            error: (error) => {
                 this.notifications.set([]);
                 this.error.set(
-                    'Não foi possível carregar as notificações. Verifique se o microserviço está ativo.',
+                    getApiErrorMessage(
+                        error,
+                        'Não foi possível carregar as notificações. Verifique se o serviço está ativo.',
+                    ),
                 );
                 this.loading.set(false);
             }

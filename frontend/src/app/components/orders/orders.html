@@ -1,4 +1,4 @@
-<div class="page-header">
+<div class="page-header" appReveal>
   <span class="page-header__icon" aria-hidden="true">
     <mat-icon>event_note</mat-icon>
   </span>
@@ -49,29 +49,32 @@
     </a>
   </div>
 } @else {
-  <div class="orders-grid">
+  <div class="orders-grid" @listStagger>
     @for (booking of bookingsService.bookings(); track booking.id) {
       <mat-card class="order-card">
         <mat-card-header>
-          <mat-card-title>Reserva #{{ booking.id.slice(0, 8) }}</mat-card-title>
+          <mat-card-title>{{ spaceName(booking.spaceId) }}</mat-card-title>
           <mat-card-subtitle>
-            Criada em {{ booking.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            Reserva criada em {{ booking.createdAt | date:'dd/MM/yyyy HH:mm' }}
           </mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
           <div class="order-meta">
-            <span class="order-meta__item">
-              <mat-icon aria-hidden="true">meeting_room</mat-icon>
-              Espaço: {{ booking.spaceId.slice(0, 8) }}...
-            </span>
+            @if (spaceLocation(booking.spaceId); as location) {
+              <span class="order-meta__item">
+                <mat-icon aria-hidden="true">location_on</mat-icon>
+                {{ location }}
+              </span>
+            }
             <span class="order-meta__item">
               <mat-icon aria-hidden="true">schedule</mat-icon>
-              {{ booking.startDate | date:'dd/MM/yyyy HH:mm' }} — {{ booking.endDate | date:'dd/MM/yyyy HH:mm' }}
+              {{ booking.startDate | date:'dd/MM/yyyy HH:mm' }} a {{ booking.endDate | date:'dd/MM/yyyy HH:mm' }}
             </span>
             <span class="order-meta__item">
               <mat-icon aria-hidden="true">info</mat-icon>
-              Status: {{ booking.status }}
+              Status:
+              <span [class]="booking.status | statusClass">{{ booking.status | statusLabel }}</span>
             </span>
           </div>
         </mat-card-content>

@@ -17,6 +17,12 @@
   font-size: 0.95rem;
 }
 
+.notifications-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .notifications-list {
   display: grid;
   gap: 0.85rem;

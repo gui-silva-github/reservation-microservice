@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Reservas">
+  <rect width="64" height="64" rx="14" fill="#115e59"/>
+  <path fill="#f97316" d="M14 20h36v6H14z"/>
+  <path fill="#ccfbf1" d="M18 30h28v20H18z"/>
+  <path fill="#0f766e" d="M22 34h8v6h-8zm12 0h8v6h-8z"/>
+</svg>

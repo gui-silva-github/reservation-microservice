@@ -1,4 +1,4 @@
-<div class="page-header">
+<div class="page-header" appReveal>
     <span class="page-header__icon" aria-hidden="true">
       <mat-icon>search</mat-icon>
     </span>
@@ -35,14 +35,14 @@
         <mat-icon>travel_explore</mat-icon>
       </span>
       <p class="empty-state__title">Nenhum espaço encontrado</p>
-      <p class="empty-state__hint">Tente outro termo ou navegue pela lista completa na Home.</p>
+      <p class="empty-state__hint">Tente outro termo ou navegue pela lista completa de espaços.</p>
       <a mat-stroked-button color="primary" [routerLink]="['/spaces']">
         <mat-icon>home</mat-icon>
         Ir para espaços
       </a>
     </div>
   } @else {
-    <div class="product-grid">
+    <div class="product-grid" @listStagger>
       @for (space of spaces(); track space.id) {
         <mat-card class="product">
           <mat-card-header>
@@ -79,7 +79,7 @@
             } @else if (!usersService.isAuthenticated) {
               <a mat-button color="primary" [routerLink]="['/auth', 'login']" class="btn-icon-action">
                 <mat-icon aria-hidden="true">login</mat-icon>
-                Login para reservar
+                Entrar para reservar
               </a>
             } @else if (!space.isActive) {
               <span class="inactive-label">Indisponível</span>

@@ -5,7 +5,7 @@
       <span class="e-commerce-title">Reservas</span>
     </div>
 
-    <a mat-button [routerLink]="['/spaces']" class="side-bar-button" routerLinkActive="active-link">
+    <a mat-button [routerLink]="['/spaces']" class="side-bar-button" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
       <mat-icon aria-hidden="true">home</mat-icon>
       <span>Espaços</span>
     </a>
@@ -62,7 +62,7 @@
       @if (!usersService.isAuthenticated) {
         <a mat-button [routerLink]="['/auth', 'login']" class="top-bar-button" routerLinkActive="active-link">
           <mat-icon aria-hidden="true">login</mat-icon>
-          <span>Login</span>
+          <span>Entrar</span>
         </a>
       }
 
@@ -88,8 +88,13 @@
       }
     </mat-toolbar>
 
-    <main class="page-container">
-      <router-outlet></router-outlet>
+    <main
+      class="page-container"
+      [@routeFade]="prepareRoute(outlet)"
+      (@routeFade.start)="onRouteAnimationStart()"
+      (@routeFade.done)="onRouteAnimationDone($event)"
+    >
+      <router-outlet #outlet="outlet"></router-outlet>
     </main>
   </div>
 </div>

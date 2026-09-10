@@ -18,7 +18,6 @@ import {
   hasApiError,
   parseApiError,
 } from '../../utils/api-error.util';
-
 @Component({
   selector: 'app-register',
   imports: [

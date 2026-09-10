@@ -8,7 +8,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { UsersService } from '../../services/users.service';
-
+import { fadeSlide, listStagger } from '../../shared/animations/app.animations';
+import { RevealDirective } from '../../shared/directives/reveal.directive';
 @Component({
   selector: 'app-show-case',
   imports: [
@@ -18,9 +19,11 @@ import { UsersService } from '../../services/users.service';
     MatButtonModule,
     MatIconModule,
     RouterModule,
+    RevealDirective,
   ],
   templateUrl: './show-case.html',
   styleUrl: './show-case.css',
+  animations: [fadeSlide, listStagger],
 })
 export class ShowCase {
   readonly spacesService = inject(SpacesService);

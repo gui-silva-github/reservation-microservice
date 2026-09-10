@@ -1,9 +1,18 @@
 :host {
     display: block;
 }
-  
+
 .top-bar form {
     display: flex;
     align-items: center;
+}
+
+.page-container {
+    position: relative;
+    overflow: visible;
+}
+
+.page-container > *:not(router-outlet) {
+    position: static;
 }
   

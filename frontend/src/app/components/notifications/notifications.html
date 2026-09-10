@@ -1,4 +1,4 @@
-<div class="page-header">
+<div class="page-header" appReveal>
   <span class="page-header__icon" aria-hidden="true">
     <mat-icon>notifications</mat-icon>
   </span>
@@ -34,8 +34,7 @@
     </span>
     <p class="empty-state__title">Nenhuma notificação ainda</p>
     <p class="empty-state__hint">
-      Quando você criar uma reserva, o aviso aparecerá aqui depois que o NotificationsService
-      processar o evento.
+      Quando você criar uma reserva, o aviso aparecerá aqui assim que o evento for processado.
     </p>
     <a mat-stroked-button color="primary" [routerLink]="['/spaces']">
       <mat-icon>meeting_room</mat-icon>
@@ -43,6 +42,15 @@
     </a>
   </div>
 } @else {
+  @if (actionError(); as errorMessage) {
+    <div class="app-alert app-alert--error" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      <div class="app-alert__content">
+        <p class="app-alert__message">{{ errorMessage }}</p>
+      </div>
+    </div>
+  }
+
   <div class="notifications-toolbar">
     <p class="notifications-toolbar__summary">
       {{ notificationsService.notifications().length }}
@@ -51,31 +59,67 @@
         · {{ notificationsService.unreadCount() }} não lido(s)
       }
     </p>
-    <button mat-stroked-button type="button" (click)="reloadNotifications()">
-      <mat-icon>refresh</mat-icon>
-      Atualizar
-    </button>
+    <div class="notifications-toolbar__actions">
+      @if (notificationsService.unreadCount() > 0) {
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          (click)="markAllAsRead()"
+          [disabled]="markingAll()"
+        >
+          <mat-icon>{{ markingAll() ? 'hourglass_top' : 'done_all' }}</mat-icon>
+          {{ markingAll() ? 'Marcando...' : 'Marcar todas como lidas' }}
+        </button>
+      }
+      <button mat-stroked-button type="button" (click)="reloadNotifications()">
+        <mat-icon>refresh</mat-icon>
+        Atualizar
+      </button>
+    </div>
   </div>
 
-  <div class="notifications-list">
+  <div class="notifications-list" @listStagger>
     @for (notification of notificationsService.notifications(); track notification.id) {
-      <mat-card class="notification-card" [class.notification-card--unread]="!notification.read">
+      <mat-card
+        class="notification-card"
+        [appUnreadPulse]="!notification.read"
+        [@unreadState]="notification.read ? 'read' : 'unread'"
+        [class.notification-card--unread]="!notification.read"
+      >
         <mat-card-header>
           <div mat-card-avatar class="notification-card__avatar" aria-hidden="true">
-            <mat-icon>{{ typeIcon(notification) }}</mat-icon>
+            <mat-icon>{{ notification.type | notificationType:'icon' }}</mat-icon>
           </div>
-          <mat-card-title>{{ typeLabel(notification) }}</mat-card-title>
+          <mat-card-title>{{ notification.type | notificationType }}</mat-card-title>
           <mat-card-subtitle>
             {{ notification.sentAt | date:'dd/MM/yyyy HH:mm' }}
             @if (!notification.read) {
               · Novo
+            } @else {
+              · Lida
             }
           </mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
-          <p class="notification-card__message">{{ notification.message }}</p>
+          <p class="notification-card__message">{{ readableMessage(notification) }}</p>
         </mat-card-content>
+
+        @if (!notification.read) {
+          <mat-card-actions align="end">
+            <button
+              mat-stroked-button
+              color="primary"
+              type="button"
+              (click)="markAsRead(notification)"
+              [disabled]="markingId() === notification.id || markingAll()"
+            >
+              <mat-icon>{{ markingId() === notification.id ? 'hourglass_top' : 'done' }}</mat-icon>
+              {{ markingId() === notification.id ? 'Marcando...' : 'Marcar como lida' }}
+            </button>
+          </mat-card-actions>
+        }
       </mat-card>
     }
   </div>

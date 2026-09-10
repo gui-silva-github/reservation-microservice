@@ -63,7 +63,7 @@ export class BookingForm implements OnInit {
     const spaceId = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
     if (!spaceId) {
       this.loading.set(false);
-      this.error.set('ID do espaço inválido');
+      this.error.set('Espaço inválido.');
       return;
     }
 
@@ -112,6 +112,7 @@ export class BookingForm implements OnInit {
       .subscribe({
         next: () => {
           this.isSubmitting.set(false);
+          this.bookingsService.invalidateByUser(userId);
           this.router.navigate(['/bookings']);
         },
         error: (error) => {

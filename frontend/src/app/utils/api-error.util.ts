@@ -35,7 +35,7 @@ export function parseApiError(error: unknown): ParsedApiError {
 
         if (error.status === 401) {
             return {
-                message: 'Email e/ou senha inválidos.',
+                message: 'E-mail e/ou senha inválidos.',
                 errors: null,
                 type: null,
                 status: 401,

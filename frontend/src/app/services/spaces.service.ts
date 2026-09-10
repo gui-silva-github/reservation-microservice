@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map, tap } from 'rxjs';
 import { environment } from '../../environment';
 import { SpaceResponse } from '../models/space-response';
@@ -18,9 +18,40 @@ export class SpacesService {
     readonly error = signal<string | null>(null);
     readonly hasSpaces = computed(() => this.catalog().length > 0);
 
-    private authHeaders(): HttpHeaders {
-        const token = localStorage.getItem('authToken');
-        return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
+    ensureCatalog(): void {
+        if (this.catalog().length > 0 || this.loading()) {
+            return;
+        }
+
+        this.http.get<unknown>(this.baseUrl).subscribe({
+            next: (data: unknown) => this.catalog.set(this.toSpaces(data)),
+            error: () => undefined,
+        });
+    }
+
+    nameById(spaceId: string): string {
+        return this.findById(spaceId)?.name || 'Espaço';
+    }
+
+    locationById(spaceId: string): string {
+        return this.findById(spaceId)?.location || '';
+    }
+
+    private findById(spaceId: string): SpaceResponse | undefined {
+        const normalizedId = spaceId.toLowerCase();
+        return this.catalog().find((item) => item.id.toLowerCase() === normalizedId);
+    }
+
+    humanizeText(text: string): string {
+        let result = text ?? '';
+
+        for (const space of this.catalog()) {
+            result = result.replace(new RegExp(space.id, 'gi'), space.name);
+        }
+
+        result = result.replace(/Sua reserva\s+[0-9a-f-]{36}\s+para o espaço/gi, 'Sua reserva no espaço');
+        result = result.replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '');
+        return result.replace(/\s+/g, ' ').replace(/\s+([.,;:])/g, '$1').trim();
     }
 
     loadCatalog(): void {
@@ -34,7 +65,7 @@ export class SpacesService {
             },
             error: () => {
                 this.catalog.set([]);
-                this.error.set('Não foi possível carregar os espaços. Verifique se o microserviço está ativo.');
+                this.error.set('Não foi possível carregar os espaços. Verifique se o serviço está ativo.');
                 this.loading.set(false);
             },
         });
@@ -55,7 +86,7 @@ export class SpacesService {
 
     createSpace(request: CreateSpaceRequest): Observable<SpaceResponse> {
         return this.http
-            .post<unknown>(this.baseUrl, request, { headers: this.authHeaders() })
+            .post<unknown>(this.baseUrl, request)
             .pipe(
                 map((data: unknown) => this.toSpace(data as Record<string, unknown>)),
                 tap(() => this.loadCatalog()),
@@ -64,7 +95,7 @@ export class SpacesService {
 
     updateSpace(id: string, request: UpdateSpaceRequest): Observable<SpaceResponse> {
         return this.http
-            .put<unknown>(`${this.baseUrl}/${id}`, request, { headers: this.authHeaders() })
+            .put<unknown>(`${this.baseUrl}/${id}`, request)
             .pipe(
                 map((data: unknown) => this.toSpace(data as Record<string, unknown>)),
                 tap(() => this.loadCatalog()),
@@ -73,7 +104,7 @@ export class SpacesService {
 
     deleteSpace(id: string): Observable<void> {
         return this.http
-            .delete<void>(`${this.baseUrl}/${id}`, { headers: this.authHeaders() })
+            .delete<void>(`${this.baseUrl}/${id}`)
             .pipe(tap(() => this.catalog.update((items: SpaceResponse[]) => items.filter((s) => s.id !== id))));
     }
 

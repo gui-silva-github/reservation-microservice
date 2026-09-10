@@ -1,5 +1,5 @@
 <div class="container">
-    <mat-card class="w-50 auth-card">
+      <mat-card class="w-50 auth-card">
       <mat-card-header>
         <mat-card-title class="card-title">
           <mat-icon aria-hidden="true">person_add</mat-icon>
@@ -31,11 +31,11 @@
           </mat-form-field>
   
           <mat-form-field class="w-100">
-            <mat-label>Email</mat-label>
+            <mat-label>E-mail</mat-label>
             <mat-icon matPrefix aria-hidden="true">email</mat-icon>
             <input matInput type="email" placeholder="seu@email.com" formControlName="email" />
             @if (emailFormControl.hasError('required')) {
-              <mat-error>Email é obrigatório</mat-error>
+              <mat-error>E-mail é obrigatório</mat-error>
             } @else if (emailFormControl.hasError('email')) {
               <mat-error>Formato inválido</mat-error>
             } @else if (hasApiError(emailFormControl)) {

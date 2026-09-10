@@ -1,0 +1,19 @@
+{
+  "name": "Plataforma de Reservas",
+  "short_name": "Reservas",
+  "description": "Reserve espaços de trabalho e acompanhe suas reservas.",
+  "theme_color": "#0f766e",
+  "background_color": "#f6f3ee",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

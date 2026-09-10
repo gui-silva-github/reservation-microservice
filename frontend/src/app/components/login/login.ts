@@ -17,7 +17,6 @@ import {
   hasApiError,
   parseApiError
 } from '../../utils/api-error.util';
-
 @Component({
   selector: 'app-login',
   imports: [
@@ -65,14 +64,14 @@ export class Login {
           return;
         }
 
-        this.errorMessage.set('Email e/ou senha inválidos.');
+        this.errorMessage.set('E-mail e/ou senha inválidos.');
       },
       error: (error) => {
         this.isSubmitting.set(false);
 
         const parsed = parseApiError(error);
         applyApiFieldErrors(this.loginForm, parsed.errors);
-        this.errorMessage.set(getApiErrorMessage(error, 'Não foi possível realizar o login.'));
+        this.errorMessage.set(getApiErrorMessage(error, 'Não foi possível entrar.'));
       }
     })
   }
