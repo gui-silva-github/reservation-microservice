@@ -6,8 +6,8 @@ body {
 }
 
 body {
-  font-family: 'Outfit', 'Inter', Roboto, 'Helvetica Neue', sans-serif;
-  background: linear-gradient(135deg, #ecfdf5 0%, #fff7ed 42%, #f0fdfa 100%);
+  font-family: 'Outfit', system-ui, sans-serif;
+  background: var(--surface);
   color: var(--text-primary);
   overflow-y: scroll;
   -webkit-font-smoothing: antialiased;
@@ -21,7 +21,7 @@ button,
 a[mat-button],
 a[mat-flat-button],
 a[mat-raised-button] {
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
 }
 
 button:focus-visible,

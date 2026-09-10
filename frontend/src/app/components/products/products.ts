@@ -10,6 +10,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteProductDialog } from '../delete-product-dialog/delete-product-dialog';
+import { RevealDirective } from '../../shared/directives/reveal.directive';
+import { fadeSlide } from '../../shared/animations/app.animations';
 
 @Component({
   selector: 'app-products',
@@ -20,9 +22,11 @@ import { DeleteProductDialog } from '../delete-product-dialog/delete-product-dia
     RouterModule,
     MatTableModule,
     MatIconModule,
+    RevealDirective,
   ],
   templateUrl: './products.html',
   styleUrl: './products.css',
+  animations: [fadeSlide],
 })
 export class Products {
   private readonly router = inject(Router);

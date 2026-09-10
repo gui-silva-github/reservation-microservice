@@ -50,6 +50,12 @@ export class NotificationsService {
         this.loadByUser(userId, { silent: true });
     }
 
+    clear(): void {
+        this.notifications.set([]);
+        this.error.set(null);
+        this.loading.set(false);
+    }
+
     loadByUser(userId: string, options?: { silent?: boolean }): void {
         if (!options?.silent) {
             this.loading.set(true);

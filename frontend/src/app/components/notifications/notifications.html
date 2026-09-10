@@ -3,12 +3,50 @@
     <mat-icon>notifications</mat-icon>
   </span>
   <div class="page-header__text">
-    <span>Minhas Notificações</span>
-    <span class="page-header__subtitle">Avisos gerados pelas suas reservas</span>
+    @if (isAdminView) {
+      <span>Notificações</span>
+      <span class="page-header__subtitle">Consulte os avisos de um cliente pelo ID do usuário</span>
+    } @else {
+      <span>Minhas Notificações</span>
+      <span class="page-header__subtitle">Avisos gerados pelas suas reservas</span>
+    }
   </div>
 </div>
 
-@if (notificationsService.loading()) {
+@if (isAdminView) {
+  <form class="admin-lookup" [formGroup]="adminLookupForm" (ngSubmit)="lookupAdminNotifications()">
+    <mat-form-field class="admin-lookup__field" appearance="outline">
+      <mat-label>ID do usuário</mat-label>
+      <input
+        matInput
+        formControlName="userId"
+        placeholder="00000000-0000-0000-0000-000000000000"
+        autocomplete="off"
+      />
+      @if (adminLookupForm.controls.userId.hasError('required') && adminLookupForm.controls.userId.touched) {
+        <mat-error>Informe o ID do usuário</mat-error>
+      } @else if (adminLookupForm.controls.userId.hasError('pattern') && adminLookupForm.controls.userId.touched) {
+        <mat-error>Informe um GUID válido</mat-error>
+      }
+    </mat-form-field>
+    <button mat-flat-button color="primary" type="submit" [disabled]="notificationsService.loading()">
+      <mat-icon>search</mat-icon>
+      Buscar
+    </button>
+  </form>
+}
+
+@if (isAdminView && !adminLookupAttempted() && !notificationsService.loading()) {
+  <div class="empty-state" role="status">
+    <span class="empty-state__icon" aria-hidden="true">
+      <mat-icon>manage_search</mat-icon>
+    </span>
+    <p class="empty-state__title">Busque as notificações de um cliente</p>
+    <p class="empty-state__hint">
+      Informe o GUID do usuário e clique em Buscar para listar os avisos dele.
+    </p>
+  </div>
+} @else if (notificationsService.loading()) {
   <div class="empty-state" role="status">
     <span class="empty-state__icon" aria-hidden="true">
       <mat-icon>hourglass_top</mat-icon>
@@ -34,12 +72,18 @@
     </span>
     <p class="empty-state__title">Nenhuma notificação ainda</p>
     <p class="empty-state__hint">
-      Quando você criar uma reserva, o aviso aparecerá aqui assim que o evento for processado.
+      @if (isAdminView) {
+        Este usuário ainda não possui avisos registrados.
+      } @else {
+        Quando você criar uma reserva, o aviso aparecerá aqui assim que o evento for processado.
+      }
     </p>
-    <a mat-stroked-button color="primary" [routerLink]="['/spaces']">
-      <mat-icon>meeting_room</mat-icon>
-      Ver espaços
-    </a>
+    @if (!isAdminView) {
+      <a mat-stroked-button color="primary" [routerLink]="['/spaces']">
+        <mat-icon>meeting_room</mat-icon>
+        Ver espaços
+      </a>
+    }
   </div>
 } @else {
   @if (actionError(); as errorMessage) {
@@ -53,6 +97,9 @@
 
   <div class="notifications-toolbar">
     <p class="notifications-toolbar__summary">
+      @if (isAdminView && selectedUserId(); as userId) {
+        Usuário {{ userId }} ·
+      }
       {{ notificationsService.notifications().length }}
       {{ notificationsService.notifications().length === 1 ? 'aviso' : 'avisos' }}
       @if (notificationsService.unreadCount() > 0) {

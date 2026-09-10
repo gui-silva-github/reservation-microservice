@@ -7,7 +7,7 @@
 .container .mdc-card {
   border-radius: var(--radius-md) !important;
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-md) !important;
+  box-shadow: var(--shadow-sm) !important;
   background: var(--surface-elevated) !important;
   overflow: hidden;
 }
@@ -15,7 +15,7 @@
 .card-title {
   margin-bottom: 1rem !important;
   color: var(--primary-700) !important;
-  font-family: 'Fraunces', Georgia, serif !important;
+  font-family: 'Outfit', system-ui, sans-serif !important;
   font-weight: 700 !important;
 }
 
@@ -25,12 +25,12 @@
   max-width: 320px;
   margin-right: 0.85rem;
   margin-bottom: 1rem;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .product:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+  border-color: rgba(13, 148, 136, 0.28);
 }
 
 .product .mat-mdc-card-title {
@@ -65,9 +65,9 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--primary-700);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .search-wrapper {
@@ -95,10 +95,10 @@
 
 #searchText {
   width: 100%;
-  height: 2.75rem;
-  background: var(--primary-50);
+  height: 2.6rem;
+  background: #fff;
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  border-radius: 999px;
   padding: 0 2.75rem 0 2.75rem;
   font-size: 0.95rem;
   color: var(--text-primary);
@@ -111,29 +111,33 @@
 
 #searchText:focus {
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
   outline: none;
 }
 
 #searchButton {
   position: absolute;
-  right: 0.35rem;
-  width: 2.25rem;
-  height: 2.25rem;
+  right: 0.3rem;
+  width: 2.1rem;
+  height: 2.1rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--primary-600), var(--accent-500));
+  background: var(--primary-600);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   color: #fff;
 }
 
+#searchButton:hover {
+  background: var(--primary-700);
+}
+
 #searchButton .mat-icon {
-  font-size: 1.1rem;
-  width: 1.1rem;
-  height: 1.1rem;
+  font-size: 1.05rem;
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
 .button-panel {
@@ -173,7 +177,7 @@ a.mat-link:hover {
   background: var(--surface-elevated);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -192,11 +196,11 @@ a.mat-link:hover {
   justify-content: center;
   gap: 0.75rem;
   text-align: center;
-  padding: 3.5rem 2rem;
+  padding: 3.25rem 2rem;
   margin-bottom: 1.5rem;
   border-radius: var(--radius-md);
-  border: 1px dashed var(--border-color);
-  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid var(--border-color);
+  background: var(--surface-elevated);
   color: var(--text-secondary);
 }
 
@@ -204,10 +208,10 @@ a.mat-link:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 50%;
-  background: var(--primary-100);
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 14px;
+  background: var(--primary-50);
   color: var(--primary-600);
 }
 
@@ -344,7 +348,7 @@ a.mat-link:hover {
   justify-content: center;
   width: 2.75rem;
   height: 2.75rem;
-  border-radius: 50%;
+  border-radius: 12px;
   background: #fef3c7;
   flex-shrink: 0;
 }
@@ -396,7 +400,7 @@ a.mat-link:hover {
   gap: 0.65rem;
   padding: 1rem 1.1rem;
   border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--primary-50), #fff);
+  background: var(--primary-50);
   border: 1px solid var(--border-color);
 }
 

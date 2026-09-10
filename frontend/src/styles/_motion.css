@@ -1,79 +1,100 @@
-@keyframes ambient-shift {
-  0% { background-position: 0% 40%; }
-  50% { background-position: 80% 60%; }
-  100% { background-position: 0% 40%; }
-}
-
-@keyframes sidebar-sheen {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 80%; }
-  100% { background-position: 0% 0%; }
-}
-
-@keyframes icon-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-
-@keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.45); }
-  70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
-}
-
-@keyframes spin-soft {
-  to { transform: rotate(180deg); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -120% 0; }
-  100% { background-position: 120% 0; }
-}
-
-@keyframes reveal-up {
+@keyframes sidebar-in {
   from {
-    opacity: 0.85;
+    opacity: 0;
+    transform: translateX(-12px);
   }
   to {
     opacity: 1;
+    transform: none;
   }
 }
 
-body {
-  background-size: 180% 180%;
-  animation: ambient-shift 22s ease-in-out infinite;
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes icon-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.03); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+}
+
+@keyframes soft-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.15); }
+  50% { box-shadow: 0 0 0 6px rgba(20, 184, 166, 0); }
+}
+
+@keyframes empty-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .side-bar {
-  background-size: 160% 160%;
-  animation: sidebar-sheen 18s ease-in-out infinite;
+  animation: sidebar-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.page-header__icon {
-  animation: icon-float 3.4s ease-in-out infinite;
+.side-bar-button {
+  animation: sidebar-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.empty-state__icon {
-  animation: icon-float 2.8s ease-in-out infinite;
-}
+.side-bar-button:nth-child(2) { animation-delay: 40ms; }
+.side-bar-button:nth-child(3) { animation-delay: 80ms; }
+.side-bar-button:nth-child(4) { animation-delay: 120ms; }
+.side-bar-button:nth-child(5) { animation-delay: 160ms; }
 
-.empty-state__icon .mat-icon[fontIcon="hourglass_top"],
-.empty-state__icon mat-icon:first-child {
-  transform-origin: center;
+/* Soft enter when Angular inserts the routed component */
+.page-container > *:not(router-outlet) {
+  animation: page-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .app-reveal {
-  opacity: 1;
-  transition: opacity 0.25s ease;
-}
-
-.app-reveal:not(.is-revealed) {
-  opacity: 0.92;
+  opacity: 0;
+  transform: translateY(12px);
 }
 
 .app-reveal.is-revealed {
-  opacity: 1;
-  animation: reveal-up 0.25s ease-out;
+  animation: reveal-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.page-header__icon {
+  animation: icon-breathe 3.2s ease-in-out infinite;
+}
+
+.empty-state {
+  animation: empty-pop 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.empty-state__icon {
+  animation: soft-glow 2.4s ease-in-out infinite;
 }
 
 .unread-pulse {
@@ -81,32 +102,64 @@ body {
 }
 
 #searchButton {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.22s ease, background 0.2s ease, box-shadow 0.22s ease;
 }
 
 #searchButton:hover {
-  transform: scale(1.04);
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+}
+
+#searchButton:active {
+  transform: scale(0.96);
 }
 
 .product,
 .order-card,
 .notification-card {
   transition:
-    transform 0.28s ease,
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.28s ease,
     border-color 0.28s ease;
 }
 
+.product:hover,
+.order-card:hover,
+.notification-card:hover {
+  transform: translateY(-4px);
+}
+
 .side-bar-button {
-  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  transition:
+    background 0.22s ease,
+    color 0.22s ease,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease;
 }
 
 .side-bar-button:hover {
-  transform: translateX(2px);
+  transform: translateX(3px);
 }
 
 .active-link {
   transform: none;
+}
+
+.top-bar-button,
+.user-chip,
+.btn-icon-action,
+.btn-primary-action {
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.top-bar-button:hover,
+.user-chip:hover,
+.btn-icon-action:hover,
+.btn-primary-action:hover {
+  transform: translateY(-1px);
 }
 
 .page-container {
@@ -114,17 +167,32 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body,
   .side-bar,
+  .side-bar-button,
+  .page-container > *:not(router-outlet),
+  .app-reveal,
+  .app-reveal.is-revealed,
   .page-header__icon,
+  .empty-state,
   .empty-state__icon,
-  .unread-pulse,
-  .app-reveal {
+  .unread-pulse {
     animation: none !important;
   }
 
   .app-reveal {
     opacity: 1;
+    transform: none;
+  }
+
+  .product:hover,
+  .order-card:hover,
+  .notification-card:hover,
+  .side-bar-button:hover,
+  .top-bar-button:hover,
+  .user-chip:hover,
+  .btn-icon-action:hover,
+  .btn-primary-action:hover,
+  #searchButton:hover {
     transform: none;
   }
 }

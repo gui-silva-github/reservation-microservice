@@ -1,7 +1,7 @@
 <div class="top-container flex">
   <nav class="side-bar flex flex-column" aria-label="Menu principal">
     <div class="flex app-title-container title-color">
-      <mat-icon class="title-color" aria-hidden="true">meeting_room</mat-icon>
+      <img class="app-logo" src="/icons/logo.png" alt="Spacebook" width="36" height="36" />
       <span class="e-commerce-title">Reservas</span>
     </div>
 
@@ -26,6 +26,11 @@
       <a mat-button [routerLink]="['/admin', 'spaces']" class="side-bar-button" routerLinkActive="active-link">
         <mat-icon aria-hidden="true">meeting_room</mat-icon>
         <span>Gerenciar Espaços</span>
+      </a>
+
+      <a mat-button [routerLink]="['/notifications']" class="side-bar-button" routerLinkActive="active-link">
+        <mat-icon aria-hidden="true">notifications</mat-icon>
+        <span>Notificações</span>
       </a>
     }
 
@@ -88,13 +93,8 @@
       }
     </mat-toolbar>
 
-    <main
-      class="page-container"
-      [@routeFade]="prepareRoute(outlet)"
-      (@routeFade.start)="onRouteAnimationStart()"
-      (@routeFade.done)="onRouteAnimationDone($event)"
-    >
-      <router-outlet #outlet="outlet"></router-outlet>
+    <main class="page-container">
+      <router-outlet />
     </main>
   </div>
 </div>

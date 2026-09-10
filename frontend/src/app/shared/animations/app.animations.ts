@@ -1,6 +1,5 @@
 import {
   animate,
-  group,
   query,
   stagger,
   state,
@@ -9,25 +8,24 @@ import {
   trigger,
 } from '@angular/animations';
 
-export const routeFadeAnimation = trigger('routeFade', [
-  transition('* <=> *', [
-    group([
-      query(':leave', [
-        style({ opacity: 1, transform: 'none', pointerEvents: 'none' }),
-        animate('120ms ease-out', style({ opacity: 0, transform: 'none' })),
-      ], { optional: true }),
-      query(':enter', [
-        style({ opacity: 0, transform: 'none' }),
-        animate('180ms ease-out', style({ opacity: 1, transform: 'none' })),
-      ], { optional: true }),
-    ]),
+/** Soft page content enter — short fade, no big vertical travel. */
+export const pageEnter = trigger('pageEnter', [
+  transition(':enter', [
+    style({ opacity: 0, transform: 'translateY(10px)' }),
+    animate(
+      '380ms cubic-bezier(0.22, 1, 0.36, 1)',
+      style({ opacity: 1, transform: 'none' }),
+    ),
   ]),
 ]);
 
 export const fadeSlide = trigger('fadeSlide', [
   transition(':enter', [
-    style({ opacity: 0 }),
-    animate('220ms ease-out', style({ opacity: 1 })),
+    style({ opacity: 0, transform: 'translateY(8px)' }),
+    animate(
+      '280ms cubic-bezier(0.22, 1, 0.36, 1)',
+      style({ opacity: 1, transform: 'none' }),
+    ),
   ]),
   transition(':leave', [
     animate('140ms ease-out', style({ opacity: 0 })),
@@ -39,10 +37,10 @@ export const listStagger = trigger('listStagger', [
     query(
       '.product, .order-card, .notification-card',
       [
-        style({ opacity: 0 }),
-        stagger(40, [
+        style({ opacity: 0, transform: 'translateY(14px) scale(0.98)' }),
+        stagger(55, [
           animate(
-            '280ms ease-out',
+            '360ms cubic-bezier(0.22, 1, 0.36, 1)',
             style({ opacity: 1, transform: 'none' }),
           ),
         ]),
@@ -54,16 +52,19 @@ export const listStagger = trigger('listStagger', [
 
 export const cardEnter = trigger('cardEnter', [
   transition(':enter', [
-    style({ opacity: 0, transform: 'translateY(4px)' }),
-    animate('240ms ease-out', style({ opacity: 1, transform: 'none' })),
+    style({ opacity: 0, transform: 'translateY(10px)' }),
+    animate(
+      '300ms cubic-bezier(0.22, 1, 0.36, 1)',
+      style({ opacity: 1, transform: 'none' }),
+    ),
   ]),
   transition(':leave', [
-    animate('140ms ease-out', style({ opacity: 0 })),
+    animate('140ms ease-out', style({ opacity: 0, transform: 'scale(0.98)' })),
   ]),
 ]);
 
 export const unreadState = trigger('unreadState', [
-  state('unread', style({ borderLeftWidth: '4px' })),
+  state('unread', style({ borderLeftWidth: '3px' })),
   state('read', style({ borderLeftWidth: '0' })),
   transition('unread <=> read', animate('220ms ease')),
 ]);

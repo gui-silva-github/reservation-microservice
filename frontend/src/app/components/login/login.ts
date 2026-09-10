@@ -17,6 +17,8 @@ import {
   hasApiError,
   parseApiError
 } from '../../utils/api-error.util';
+import { fadeSlide } from '../../shared/animations/app.animations';
+
 @Component({
   selector: 'app-login',
   imports: [
@@ -25,6 +27,7 @@ import {
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
+  animations: [fadeSlide],
 })
 export class Login {
   readonly errorMessage = signal<string | null>(null);

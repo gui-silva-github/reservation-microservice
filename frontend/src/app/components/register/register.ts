@@ -18,6 +18,8 @@ import {
   hasApiError,
   parseApiError,
 } from '../../utils/api-error.util';
+import { fadeSlide } from '../../shared/animations/app.animations';
+
 @Component({
   selector: 'app-register',
   imports: [
@@ -26,6 +28,7 @@ import {
   ],
   templateUrl: './register.html',
   styleUrl: './register.css',
+  animations: [fadeSlide],
 })
 export class Register {
   readonly errorMessage = signal<string | null>(null);
