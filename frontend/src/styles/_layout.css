@@ -15,10 +15,11 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.85rem 1rem 1.75rem;
-  font-size: 1.15rem;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.28rem;
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
 }
 
 .e-commerce-title {
@@ -30,7 +31,7 @@
   width: 100%;
   padding: 0 1rem !important;
   margin-bottom: 0.35rem;
-  color: #e0e7ff !important;
+  color: #ccfbf1 !important;
   border-radius: var(--radius-sm) !important;
   min-height: 44px;
 }
@@ -49,14 +50,14 @@
 .active-link {
   background: rgba(255, 255, 255, 0.2) !important;
   color: #fff !important;
-  box-shadow: inset 3px 0 0 #c4b5fd;
+  box-shadow: inset 3px 0 0 #fb923c;
 }
 
 .copy-right {
   font-size: 0.75rem;
   padding: 1rem 1.25rem;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(224, 231, 255, 0.8);
+  color: rgba(204, 251, 241, 0.8);
 }
 
 .app-container {
@@ -97,9 +98,10 @@
   gap: 0.75rem;
   font-weight: 700 !important;
   margin-bottom: 1.5rem;
-  font-size: 1.6rem;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.7rem;
   color: var(--primary-800);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .page-header__icon {

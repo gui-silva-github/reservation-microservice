@@ -6,8 +6,8 @@ body {
 }
 
 body {
-  font-family: 'Inter', Roboto, 'Helvetica Neue', sans-serif;
-  background: linear-gradient(135deg, var(--primary-50) 0%, var(--accent-100) 48%, #f5f3ff 100%);
+  font-family: 'Outfit', 'Inter', Roboto, 'Helvetica Neue', sans-serif;
+  background: linear-gradient(135deg, #ecfdf5 0%, #fff7ed 42%, #f0fdfa 100%);
   color: var(--text-primary);
   overflow-y: scroll;
   -webkit-font-smoothing: antialiased;
@@ -29,4 +29,26 @@ a:focus-visible,
 input:focus-visible {
   outline: 2px solid var(--primary-400);
   outline-offset: 2px;
+}
+
+.mat-icon,
+.material-icons,
+.mat-mdc-button .mat-icon,
+.mat-mdc-icon-button .mat-icon,
+.mat-mdc-outlined-button .mat-icon,
+.mat-mdc-unelevated-button .mat-icon,
+.side-bar-button .mat-icon,
+.page-header .mat-icon,
+.card-title .mat-icon {
+  font-family: 'Material Icons' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga' !important;
+  -webkit-font-feature-settings: 'liga' !important;
+  -webkit-font-smoothing: antialiased;
 }

@@ -1,0 +1,130 @@
+@keyframes ambient-shift {
+  0% { background-position: 0% 40%; }
+  50% { background-position: 80% 60%; }
+  100% { background-position: 0% 40%; }
+}
+
+@keyframes sidebar-sheen {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 80%; }
+  100% { background-position: 0% 0%; }
+}
+
+@keyframes icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.45); }
+  70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+}
+
+@keyframes spin-soft {
+  to { transform: rotate(180deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -120% 0; }
+  100% { background-position: 120% 0; }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0.85;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+body {
+  background-size: 180% 180%;
+  animation: ambient-shift 22s ease-in-out infinite;
+}
+
+.side-bar {
+  background-size: 160% 160%;
+  animation: sidebar-sheen 18s ease-in-out infinite;
+}
+
+.page-header__icon {
+  animation: icon-float 3.4s ease-in-out infinite;
+}
+
+.empty-state__icon {
+  animation: icon-float 2.8s ease-in-out infinite;
+}
+
+.empty-state__icon .mat-icon[fontIcon="hourglass_top"],
+.empty-state__icon mat-icon:first-child {
+  transform-origin: center;
+}
+
+.app-reveal {
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.app-reveal:not(.is-revealed) {
+  opacity: 0.92;
+}
+
+.app-reveal.is-revealed {
+  opacity: 1;
+  animation: reveal-up 0.25s ease-out;
+}
+
+.unread-pulse {
+  animation: pulse-ring 1.8s ease-out infinite;
+}
+
+#searchButton {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#searchButton:hover {
+  transform: scale(1.04);
+}
+
+.product,
+.order-card,
+.notification-card {
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
+}
+
+.side-bar-button {
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.side-bar-button:hover {
+  transform: translateX(2px);
+}
+
+.active-link {
+  transform: none;
+}
+
+.page-container {
+  min-height: 28rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .side-bar,
+  .page-header__icon,
+  .empty-state__icon,
+  .unread-pulse,
+  .app-reveal {
+    animation: none !important;
+  }
+
+  .app-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -15,7 +15,8 @@
 .card-title {
   margin-bottom: 1rem !important;
   color: var(--primary-700) !important;
-  font-weight: 600 !important;
+  font-family: 'Fraunces', Georgia, serif !important;
+  font-weight: 700 !important;
 }
 
 .product {
@@ -110,7 +111,7 @@
 
 #searchText:focus {
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
   outline: none;
 }
 
