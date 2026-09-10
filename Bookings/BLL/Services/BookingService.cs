@@ -92,7 +92,7 @@ public class BookingService : IBookingService
             request.UserId,
             request.SpaceId);
 
-        await ValidateReferencesAsync(request.UserId, request.SpaceId, cancellationToken);
+        SpaceReferenceResponse space = await ValidateReferencesAsync(request.UserId, request.SpaceId, cancellationToken);
         await ValidateDateOverlapAsync(request.SpaceId, startDateUtc, endDateUtc, cancellationToken: cancellationToken);
 
         Booking booking = _mapper.Map<Booking>(request);
@@ -106,7 +106,7 @@ public class BookingService : IBookingService
 
         _logger.LogInformation("Reserva {BookingId} criada com sucesso.", createdBooking.Id);
 
-        PublishBookingCreatedFireAndForget(createdBooking);
+        PublishBookingCreatedFireAndForget(createdBooking, space.Name);
 
         return _mapper.Map<BookingResponse>(createdBooking);
     }
@@ -187,26 +187,28 @@ public class BookingService : IBookingService
         _logger.LogInformation("Reserva {BookingId} cancelada com sucesso.", id);
     }
 
-    private async Task ValidateReferencesAsync(Guid userId, Guid spaceId, CancellationToken cancellationToken)
+    private async Task<SpaceReferenceResponse> ValidateReferencesAsync(Guid userId, Guid spaceId, CancellationToken cancellationToken)
     {
         UserReferenceResponse? user = await _usersHttpClient.GetUserByIdAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            throw new InvalidReferenceException($"O usuário com ID '{userId}' não foi encontrado.");
+            throw new InvalidReferenceException("O usuário informado não foi encontrado.");
         }
 
         SpaceReferenceResponse? space = await _spacesHttpClient.GetSpaceByIdAsync(spaceId, cancellationToken);
 
         if (space is null)
         {
-            throw new InvalidReferenceException($"O espaço com ID '{spaceId}' não foi encontrado.");
+            throw new InvalidReferenceException("O espaço informado não foi encontrado.");
         }
 
         if (!space.IsActive)
         {
-            throw new InvalidReferenceException($"O espaço com ID '{spaceId}' não está ativo.");
+            throw new InvalidReferenceException("O espaço informado não está ativo.");
         }
+
+        return space;
     }
 
     private async Task ValidateDateOverlapAsync(
@@ -226,11 +228,11 @@ public class BookingService : IBookingService
         if (hasConflict)
         {
             throw new BookingConflictException(
-                $"Já existe uma reserva confirmada para o espaço '{spaceId}' no intervalo informado.");
+                "Já existe uma reserva confirmada para este espaço no intervalo informado.");
         }
     }
 
-    private void PublishBookingCreatedFireAndForget(Booking booking)
+    private void PublishBookingCreatedFireAndForget(Booking booking, string spaceName)
     {
         BookingCreatedEvent bookingCreatedEvent = new(
             RedisQueueConstants.BookingCreatedEventType,
@@ -238,7 +240,8 @@ public class BookingService : IBookingService
             booking.UserId,
             booking.SpaceId,
             booking.StartDate,
-            booking.EndDate);
+            booking.EndDate,
+            spaceName);
 
         _ = Task.Run(async () =>
         {

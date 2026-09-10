@@ -69,6 +69,10 @@ namespace Reservation.NotificationsService.API.Middleware
                         GroupValidationErrors(validationException),
                         nameof(ValidationException))),
 
+                NotFoundException notFoundException => (
+                    HttpStatusCode.NotFound,
+                    new ApiErrorResponse(notFoundException.Message, Type: nameof(NotFoundException))),
+
                 ForbiddenException forbiddenException => (
                     HttpStatusCode.Forbidden,
                     new ApiErrorResponse(forbiddenException.Message, Type: nameof(ForbiddenException))),

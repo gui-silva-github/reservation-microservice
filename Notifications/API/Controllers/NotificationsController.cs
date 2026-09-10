@@ -45,6 +45,35 @@ namespace Reservation.NotificationsService.API.Controllers
             return Ok(notifications);
         }
 
+        [HttpPatch("{id:guid}/read")]
+        [ProducesResponseType(typeof(NotificationResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> MarkAsRead(Guid id)
+        {
+            NotificationResponse notification = await _notificationService.MarkAsReadAsync(
+                id,
+                GetAuthenticatedUserId(),
+                User.FindFirst(ClaimTypes.Role)?.Value);
+
+            return Ok(notification);
+        }
+
+        [HttpPatch("userid/{userId:guid}/read-all")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> MarkAllAsRead(Guid userId)
+        {
+            await _notificationService.MarkAllAsReadAsync(
+                userId,
+                GetAuthenticatedUserId(),
+                User.FindFirst(ClaimTypes.Role)?.Value);
+
+            return NoContent();
+        }
+
         private Guid? GetAuthenticatedUserId()
         {
             string? userIdClaim = User.FindFirst("UserId")?.Value

@@ -42,6 +42,17 @@ namespace Reservation.NotificationsService.DAL.Repositories
             return notification;
         }
 
+        public async Task<Notification?> GetByIdAsync(Guid id)
+        {
+            string query = $"""
+                SELECT {SelectCollumns}
+                FROM notifications
+                WHERE id = @Id
+                """;
+
+            return await _dbContext.Connection.QuerySingleOrDefaultAsync<Notification>(query, new { Id = id });
+        }
+
         public async Task<IReadOnlyList<Notification>> GetByUserIdAsync(Guid userId)
         {
             string query = $"""
@@ -56,6 +67,29 @@ namespace Reservation.NotificationsService.DAL.Repositories
                 new { UserId = userId });
 
             return notifications.ToList();
+        }
+
+        public async Task<bool> MarkAsReadAsync(Guid id)
+        {
+            const string query = """
+                UPDATE notifications
+                SET read = TRUE
+                WHERE id = @Id
+                """;
+
+            int rows = await _dbContext.Connection.ExecuteAsync(query, new { Id = id });
+            return rows > 0;
+        }
+
+        public async Task<int> MarkAllAsReadByUserIdAsync(Guid userId)
+        {
+            const string query = """
+                UPDATE notifications
+                SET read = TRUE
+                WHERE user_id = @UserId AND read = FALSE
+                """;
+
+            return await _dbContext.Connection.ExecuteAsync(query, new { UserId = userId });
         }
     }
 }

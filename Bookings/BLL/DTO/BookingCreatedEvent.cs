@@ -6,6 +6,7 @@ namespace Reservation.BookingsService.BLL.DTO
         Guid UserId,
         Guid SpaceId,
         DateTime StartDate,
-        DateTime EndDate
+        DateTime EndDate,
+        string? SpaceName = null
     );
 }

@@ -46,11 +46,41 @@ namespace Reservation.NotificationsService.BLL.Services
             return _mapper.Map<IReadOnlyList<NotificationResponse>>(notifications);
         }
 
+        public async Task<NotificationResponse> MarkAsReadAsync(Guid id, Guid? authenticatedUserId, string? role)
+        {
+            Notification? notification = await _notificationRepository.GetByIdAsync(id);
+
+            if (notification is null)
+            {
+                throw new NotFoundException("Notificação não encontrada.");
+            }
+
+            EnsureUserCanAccessNotifications(notification.UserId, authenticatedUserId, role);
+
+            if (!notification.Read)
+            {
+                await _notificationRepository.MarkAsReadAsync(id);
+                notification.Read = true;
+            }
+
+            return _mapper.Map<NotificationResponse>(notification);
+        }
+
+        public async Task MarkAllAsReadAsync(Guid userId, Guid? authenticatedUserId, string? role)
+        {
+            EnsureUserCanAccessNotifications(userId, authenticatedUserId, role);
+            await _notificationRepository.MarkAllAsReadByUserIdAsync(userId);
+        }
+
         public async Task ProcessBookingCreatedEventAsync(BookingCreatedEvent bookingEvent)
         {
+            string spaceName = string.IsNullOrWhiteSpace(bookingEvent.SpaceName)
+                ? "espaço reservado"
+                : bookingEvent.SpaceName.Trim();
+
             string message =
-                $"Sua reserva {bookingEvent.BookingId} para o espaço {bookingEvent.SpaceId} " +
-                $"de {bookingEvent.StartDate:u} até {bookingEvent.EndDate:u} foi criada com sucesso.";
+                $"Sua reserva no espaço {spaceName} de {FormatInSaoPaulo(bookingEvent.StartDate)} " +
+                $"até {FormatInSaoPaulo(bookingEvent.EndDate)} foi criada com sucesso.";
 
             Notification notification = BuildNotification(
                 bookingEvent.UserId,
@@ -58,6 +88,26 @@ namespace Reservation.NotificationsService.BLL.Services
                 NotificationType.BookingCreated);
 
             await _notificationRepository.CreateAsync(notification);
+        }
+
+        private static string FormatInSaoPaulo(DateTime value)
+        {
+            DateTime utc = value.Kind switch
+            {
+                DateTimeKind.Utc => value,
+                DateTimeKind.Local => value.ToUniversalTime(),
+                _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+            };
+
+            try
+            {
+                TimeZoneInfo zone = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo");
+                return TimeZoneInfo.ConvertTimeFromUtc(utc, zone).ToString("dd/MM/yyyy HH:mm");
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return utc.AddHours(-3).ToString("dd/MM/yyyy HH:mm");
+            }
         }
 
         private static Notification BuildNotification(Guid userId, string message, NotificationType type)

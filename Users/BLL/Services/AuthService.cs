@@ -1,4 +1,3 @@
-using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using Reservation.UsersService.BLL.DTOs;
@@ -12,20 +11,17 @@ namespace Reservation.UsersService.BLL.Services {
     internal sealed class AuthService : IAuthService {
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenService _jwtTokenService;
-        private readonly IMapper _mapper;
         private readonly IValidator<RegisterRequest> _registerValidator;
         private readonly IValidator<LoginRequest> _loginValidator;
 
         public AuthService(
             IUserRepository userRepository,
             IJwtTokenService jwtTokenService,
-            IMapper mapper,
             IValidator<RegisterRequest> registerValidator,
             IValidator<LoginRequest> loginValidator
         ) {
             _userRepository = userRepository;
             _jwtTokenService = jwtTokenService;
-            _mapper = mapper;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
         }
@@ -69,9 +65,15 @@ namespace Reservation.UsersService.BLL.Services {
             return BuildAuthenticationResponse(user, token);
         }
 
-        private AuthenticationResponse BuildAuthenticationResponse(User user, string token) {
-            AuthenticationResponse response = _mapper.Map<AuthenticationResponse>(user);
-            return response with { Success = true, Token = token };
+        private static AuthenticationResponse BuildAuthenticationResponse(User user, string token) {
+            return new AuthenticationResponse(
+                Success: true,
+                Token: token,
+                UserId: user.Id,
+                Name: user.Name,
+                Email: user.Email,
+                Role: user.Role
+            );
         }
 
         private static async Task ValidateAsync<T>(IValidator<T> validator, T instance) {

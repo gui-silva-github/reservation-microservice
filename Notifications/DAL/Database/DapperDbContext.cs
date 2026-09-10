@@ -24,7 +24,7 @@ namespace Reservation.NotificationsService.DAL.Database
         {
             get
             {
-                if (Connection.State != ConnectionState.Open)
+                if (_connection.State != ConnectionState.Open)
                 {
                     _connection.Open();
                 }

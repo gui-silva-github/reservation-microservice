@@ -8,7 +8,14 @@ namespace Reservation.NotificationsService.BLL.Mappings
     {
         public NotificationMappingProfile()
         {
-            CreateMap<Notification, NotificationResponse>();
+            CreateMap<Notification, NotificationResponse>()
+                .ConstructUsing(source => new NotificationResponse(
+                    source.Id,
+                    source.UserId,
+                    source.Message,
+                    source.Type,
+                    source.SentAt,
+                    source.Read));
         }
     }
 }

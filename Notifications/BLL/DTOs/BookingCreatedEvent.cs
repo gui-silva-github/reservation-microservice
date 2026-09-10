@@ -6,5 +6,6 @@ namespace Reservation.NotificationsService.BLL.DTOs
         Guid UserId,
         Guid SpaceId,
         DateTime StartDate,
-        DateTime EndDate);
+        DateTime EndDate,
+        string? SpaceName = null);
 }
